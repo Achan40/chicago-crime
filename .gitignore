@@ -130,3 +130,6 @@ dmypy.json
 
 # Api keys
 secret.py
+
+#vscode settings
+.vscode
