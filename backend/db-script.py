@@ -11,21 +11,21 @@ from secret import APP_TOKEN
 # endyear should be the string for the year we want to end the query  
 class CrimeData:
     def __init__(self, params, startyear, endyear):
+
+        # turn params into comma seperated string
         self.params = ''
         for i in range(0,len(params)):
             if i == len(params)-1:
-                paramsstring = params[i]
-                self.params += paramsstring
+                self.params += params[i]
                 break
             else:
-                paramsstring = params[i] + ','
-                self.params += paramsstring
+                self.params += params[i] + ','
             
         self.startyear = startyear
         self.endyear = endyear
     
 def main():
-    test = CrimeData(['hi','test'],'2010','2018')
+    test = CrimeData(['hi','test','again'],'2010','2018')
     print(test.params)
     print(test.startyear)
     print(test.endyear)
