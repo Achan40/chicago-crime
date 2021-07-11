@@ -44,14 +44,14 @@ class CrimeData:
         self.data = pd.DataFrame(df)
         return self.data
     
-    def send_data(self):
+    def send_data(self,tablename):
         mydb = create_engine('mysql+pymysql://' + USER + ':' + PASSW + '@' + HOST + ':' + str(PORT) + '/' + DATABASE, echo=False)
-        self.data.to_sql(name='test', con=mydb, if_exists='replace', index='False')
+        self.data.to_sql(name=tablename, con=mydb, if_exists='replace', index='False')
 
 def main():
     test = CrimeData(params=['date','community_area'],startyear='2010',endyear='2011')
     test.get_data(limit='6')
-    test.send_data()
+    test.send_data(tablename='test')
 
 if __name__ == "__main__":
     main()
