@@ -128,8 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Api keys
+# Api keys/databse credentials
 secret.py
+db-creds.py
 
 # vscode settings
 .vscode

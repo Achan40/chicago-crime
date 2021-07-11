@@ -1,9 +1,15 @@
+from os import name
 import requests
 import json
 import pandas as pd
+import pymysql
+from sqlalchemy import create_engine
 
 # Load APP_TOKEN vairable from keys file
 from secret import APP_TOKEN
+
+# Load variable from databse credentials file
+from db_creds import HOST,PORT,USER,PASSW,DATABASE
 
 # object for data to be loaded to database
 # params should be a list of strings of the API field names to be queried
@@ -34,17 +40,18 @@ class CrimeData:
         resp = requests.get(url,headers=headers)
         df = json.loads(resp.text)
 
-        # Return the queried data excluding na rows
-        self.data = pd.DataFrame(df).dropna()
+        # Return the queried data
+        self.data = pd.DataFrame(df)
         return self.data
     
+    def send_data(self):
+        mydb = create_engine('mysql+pymysql://' + USER + ':' + PASSW + '@' + HOST + ':' + str(PORT) + '/' + DATABASE, echo=False)
+        self.data.to_sql(name='test', con=mydb, if_exists='replace', index='False')
+
 def main():
-    test = CrimeData(params=['date','community_area'],startyear='2004',endyear='2005')
-    test.get_data(limit='10000')
-    print(test.params)
-    print(test.startyear)
-    print(test.endyear)
-    print(test.data)
+    test = CrimeData(params=['date','community_area'],startyear='2010',endyear='2011')
+    test.get_data(limit='6')
+    test.send_data()
 
 if __name__ == "__main__":
     main()
