@@ -1,4 +1,3 @@
-from os import name
 import requests
 import json
 import pandas as pd
@@ -46,7 +45,7 @@ class CrimeData:
     
     def send_data(self,tablename):
         mydb = create_engine('mysql+pymysql://' + USER + ':' + PASSW + '@' + HOST + ':' + str(PORT) + '/' + DATABASE, echo=False)
-        self.data.to_sql(name=tablename, con=mydb, if_exists='replace', index='False')
+        self.data.to_sql(name=tablename, con=mydb, if_exists='replace', index=False)
 
 def main():
     test = CrimeData(params=['date','community_area'],startyear='2010',endyear='2011')
