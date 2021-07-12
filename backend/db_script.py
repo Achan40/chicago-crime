@@ -31,7 +31,8 @@ class CrimeData:
         # Ending year of data we want to query
         self.endyear = endyear
 
-    def get_data(self,limit='10000'):
+    # Retreive data from Socrata API
+    def get_API_data(self,limit='10000'):
         # String literal 
         url = f'https://data.cityofchicago.org/resource/ijzp-q8t2.json?$select={self.params}&$where=year<={self.endyear} AND year >= {self.startyear}&$order=date ASC&$limit={limit}'
         # Using our app token
@@ -43,13 +44,14 @@ class CrimeData:
         self.data = pd.DataFrame(df)
         return self.data
     
+    # Send data to a table in database
     def send_data(self,tablename):
         mydb = create_engine('mysql+pymysql://' + USER + ':' + PASSW + '@' + HOST + ':' + str(PORT) + '/' + DATABASE, echo=False)
         self.data.to_sql(name=tablename, con=mydb, if_exists='replace', index=False)
 
 def main():
     test = CrimeData(params=['date','community_area'],startyear='2010',endyear='2011')
-    test.get_data(limit='6')
+    test.get_API_data(limit='6')
     test.send_data(tablename='test')
 
 if __name__ == "__main__":
