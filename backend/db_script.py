@@ -1,3 +1,4 @@
+from datetime import datetime
 import requests
 import json
 import pandas as pd
@@ -31,6 +32,9 @@ class CrimeData:
         # Ending year of data we want to query
         self.endyear = endyear
 
+        # create engine for database connection
+        self.mydb = create_engine('mysql+pymysql://' + USER + ':' + PASSW + '@' + HOST + ':' + str(PORT) + '/' + DATABASE, echo=False)
+
     # Retreive data from Socrata API
     def get_API_data(self,limit='10000'):
         # String literal 
@@ -41,17 +45,22 @@ class CrimeData:
         df = json.loads(resp.text)
 
         # Return the queried data
-        self.data = pd.DataFrame(df)
+        self.data = pd.DataFrame(df).dropna()
+
+        # typecasting
+        self.data['date'] = pd.to_datetime(self.data['date'])
+        self.data['community_area'] = self.data['community_area'].astype(int)
+
         return self.data
     
-    # Send data to a table in database
+    # Send data to a table in database (creates a completely new table)
     def send_data(self,tablename):
-        mydb = create_engine('mysql+pymysql://' + USER + ':' + PASSW + '@' + HOST + ':' + str(PORT) + '/' + DATABASE, echo=False)
-        self.data.to_sql(name=tablename, con=mydb, if_exists='replace', index=False)
+        self.data.to_sql(name=tablename, con=self.mydb, if_exists='replace', index=False)
 
 def main():
     test = CrimeData(params=['date','community_area'],startyear='2010',endyear='2011')
-    test.get_API_data(limit='6')
+    test.get_API_data(limit='1000000000')
+    print(test.data)
     test.send_data(tablename='test')
 
 if __name__ == "__main__":
