@@ -19,10 +19,7 @@ class CrimePreds:
 
 def main():
     test = CrimePreds()
-    test.get_data('test')
-    print(test.data)
-    print(test.data.dtypes)
-    print(test.data['num_crimes'].sum())
+    test.get_data('chicrime')
 
 if __name__ == "__main__":
     main()
